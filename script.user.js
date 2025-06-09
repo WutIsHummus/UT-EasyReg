@@ -2,7 +2,7 @@
 // @name         UT EasyReg
 // @namespace    http://tampermonkey.net/
 // @version      6.9
-// @description  Instntly register for your ut classes
+// @description  Instantly register for your ut classes
 // @match        https://utdirect.utexas.edu/registration/chooseSemester.WBX*
 // @match        https://utdirect.utexas.edu/registration/registration.WBX*
 // @grant        GM_getValue
