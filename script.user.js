@@ -2,9 +2,8 @@
 // @name         UT EasyReg
 // @namespace    http://tampermonkey.net/
 // @version      6.9
-// @description  Instantly register for your ut classes
-// @match        https://utdirect.utexas.edu/registration/chooseSemester.WBX*
-// @match        https://utdirect.utexas.edu/registration/registration.WBX*
+// @description  Instntly register for your ut classes
+// @match        https://utdirect.utexas.edu/registration/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_openInTab
@@ -19,22 +18,27 @@
     const unique = decodeURIComponent(hashMatch[1]);
     // Poll fast to find needed elements
     const interval = setInterval(()=>{
-      if (location.pathname.endsWith('chooseSemester.WBX')) {
-        const semForm   = document.querySelector('form[action="registration.WBX"]');
-        const submitBtn = semForm?.querySelector('input[type="submit"][value*="Fall"]');
+        const semForm   = document.querySelector('form[action="registration.WBX"]') || document.querySelector('form[action="confirmEmailAddress.WBX"]');
+        const submitBtn = semForm?.querySelector('input[name="submit"]');
         if (semForm && submitBtn) {
           semForm.action = semForm.action.replace(/#.*$/, '') + '#quickreg=' + encodeURIComponent(unique);
           submitBtn.click();
           clearInterval(interval);
         }
-      } else if (location.pathname.endsWith('registration.WBX')) {
-        const regForm     = document.getElementById('regform');
-        const addRadio    = document.getElementById('ds_request_STADD');
-        const uniqueInput = document.getElementById('s_unique_add');
-        if (regForm && addRadio && uniqueInput) {
-          addRadio.checked      = true;
-          uniqueInput.value     = unique;
-          regForm.submit();
+      else if (location.pathname.endsWith('chooseSemester.WBX')) {
+        const semForm   = document.querySelector('form[action="registration.WBX"]');
+        const submitBtn = semForm?.querySelector('input[name="submit"]');
+        if (semForm && submitBtn) {
+          semForm.action = semForm.action.replace(/#.*$/, '') + '#quickreg=' + encodeURIComponent(unique);
+          submitBtn.click();
+          clearInterval(interval);
+        }
+      } else if (location.pathname.endsWith('confirmEmailAddress.WBX')) {
+        const semForm   = document.querySelector('form[action="registration.WBX"]');
+       const submitBtn = semForm?.querySelector('input[name="submit"]');
+        if (semForm && submitBtn) {
+          semForm.action = semForm.action.replace(/#.*$/, '') + '#quickreg=' + encodeURIComponent(unique);
+          submitBtn.click();
           clearInterval(interval);
         }
       }
@@ -69,7 +73,7 @@
     panel.innerHTML = `
       <strong>UT QuickReg</strong><br><br>
       <label>Uniques (CSV):<br>
-        <input id="qt-uniques" type="text" style="width:100%" placeholder="27695,12345,…">
+        <input id="qt-uniques" type="text" style="width:100%" placeholder="67035,67300,67085,67040,68320,68450">
       </label><br>
       <label>When:<br>
         <input id="qt-dt" type="datetime-local" style="width:100%">
@@ -132,7 +136,6 @@
     const chooserUrl = `${location.origin}/registration/chooseSemester.WBX`;
 
     uniques.forEach(unique => {
-      // register
       const tabUrl = `${chooserUrl}#quickreg=${encodeURIComponent(unique)}`;
       GM_openInTab(tabUrl, { active: false, insert: true });
     });
